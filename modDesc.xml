@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<modDesc descVersion="52">
+    <author><![CDATA[Courseplay.devTeam]]></author>
+    <version>1.0.0.0</version>
+    <title>
+        <en>Click to switch</en>
+    </title>
+
+    <description>
+        <en>
+		<![CDATA[Click to switch]]>
+		</en>
+        <de>
+		<![CDATA[Click to switch]]>
+		</de>
+    </description>
+
+    <iconFilename>icon_clicktoswitch.dds</iconFilename>
+    <multiplayer supported="true" />
+
+	<l10n filenamePrefix="translations/translation" /> <!-- load translations from "translations/translation_<language>.xml file -->
+	
+	<extraSourceFiles>
+        <sourceFile filename="register.lua"/>
+    </extraSourceFiles>
+
+	<specializations>
+        <specialization name="clickToSwitch"                   className="ClickToSwitch"                   filename="ClickToSwitch.lua" />
+    </specializations>
+
+	<inputBinding>
+		<actionBinding action="CLICK_TO_SWITCH_TOGGLE_MOUSE">
+			<binding device="KB_MOUSE_DEFAULT" input="MOUSE_BUTTON_RIGHT" />
+            <binding device="GAMEPAD_DEFAULT" input="BUTTON_5 BUTTON_18" />
+		</actionBinding>
+        <actionBinding action="CLICK_TO_SWITCH_ENTER_VEHICLE">
+			<binding device="KB_MOUSE_DEFAULT" input="MOUSE_BUTTON_LEFT" />
+            <binding device="GAMEPAD_DEFAULT" input="BUTTON_5 BUTTON_17" />
+		</actionBinding>	
+    </inputBinding>	
+
+	<actions>
+		<action name="CLICK_TO_SWITCH_TOGGLE_MOUSE" />
+        <action name="CLICK_TO_SWITCH_ENTER_VEHICLE" />
+	</actions>
+
+	<l10n>	
+		<text name="CLICK_TO_SWITCH_TOGGLE_MOUSE"><de>Mauszeiger an/aus</de><en>Mouse cursor on/off</en></text>	
+        <text name="CLICK_TO_SWITCH_ENTER_VEHICLE"><de>In Fahrzeug einsteigen</de><en>Try to enter vehicle</en></text>
+	</l10n>
+
+</modDesc>

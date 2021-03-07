@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+	<texts>
+		<text name="input_CLICK_TO_SWITCH_TOGGLE_MOUSE"		text="CTS: Mauszeiger an/aus" />
+		<text name="input_CLICK_TO_SWITCH_ENTER_VEHICLE"		text="CTS: In Fahrzeug einsteigen" />
+	</texts>
+</l10n>
