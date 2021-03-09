@@ -4,7 +4,7 @@ ClickToSwitch = {}
 ClickToSwitch.MOD_NAME = g_currentModName
 
 function ClickToSwitch.prerequisitesPresent(specializations)
-	return SpecializationUtil.hasSpecialization(Drivable, specializations) 
+    return SpecializationUtil.hasSpecialization(Drivable, specializations) 
 end
 
 function ClickToSwitch.registerEventListeners(vehicleType)	
@@ -14,21 +14,27 @@ end
 
 function ClickToSwitch.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "setShowMouseCursor", ClickToSwitch.setShowMouseCursor)
-    SpecializationUtil.registerFunction(vehicleType, "tryToEnterVehicle", ClickToSwitch.tryToEnterVehicle)
     SpecializationUtil.registerFunction(vehicleType, "getLastMousePosition", ClickToSwitch.getLastMousePosition)
-    SpecializationUtil.registerFunction(vehicleType, "raycastCallback", ClickToSwitch.raycastCallback)
+    SpecializationUtil.registerFunction(vehicleType, "isClickToSwitchAllowed", ClickToSwitch.isClickToSwitchAllowed)
+    SpecializationUtil.registerFunction(vehicleType, "isChangingMouseStateAllowed", ClickToSwitch.isChangingMouseStateAllowed)
+    SpecializationUtil.registerFunction(vehicleType, "isMouseActive", ClickToSwitch.isMouseActive)
+    SpecializationUtil.registerFunction(vehicleType, "enterVehicleRaycast", ClickToSwitch.enterVehicleRaycast)
+    SpecializationUtil.registerFunction(vehicleType, "enterVehicleRaycastCallback", ClickToSwitch.enterVehicleRaycastCallback)
 end
 
+---Register toggle mouse state and clickToSwitch action events
+---@param bool isActiveForInput
+---@param bool isActiveForInputIgnoreSelection
 function ClickToSwitch:onRegisterActionEvents(isActiveForInput, isActiveForInputIgnoreSelection)
 	if self.isClient and not g_courseplay and not self.spec_courseplay then
         local spec = self.spec_clickToSwitch
         self:clearActionEventsTable(spec.actionEvents)
         if isActiveForInputIgnoreSelection then
-            --toggle mouse
+            ---Toggle mouse action event
             local _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.CLICK_TO_SWITCH_TOGGLE_MOUSE, self, ClickToSwitch.actionEventToggleMouse, false, true, false, true, nil)
             g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
             g_inputBinding:setActionEventText(actionEventId, spec.texts.toggleMouse)
-            --enter vehicle
+            ---ClickToSwitch (enter vehicle by mouse button) action event
             _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.CLICK_TO_SWITCH_ENTER_VEHICLE, self, ClickToSwitch.actionEventEnterVehicle, false, true, false, true, nil)
             g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
             g_inputBinding:setActionEventText(actionEventId, spec.texts.enterVehicle)
@@ -38,31 +44,58 @@ function ClickToSwitch:onRegisterActionEvents(isActiveForInput, isActiveForInput
     end
 end;
 
+---Updates toggle mouse state and clickToSwitch action events visibility and usability 
+---@param class self 
 function ClickToSwitch.updateActionEventState(self)
+    ---Activate/deactivate the clickToSwitch action event 
     local spec = self.spec_clickToSwitch
     local actionEvent = spec.actionEvents[InputAction.CLICK_TO_SWITCH_ENTER_VEHICLE]
-    g_inputBinding:setActionEventActive(actionEvent.actionEventId, spec.mouseActive)
+    g_inputBinding:setActionEventActive(actionEvent.actionEventId, self:isClickToSwitchAllowed())
+    
+    ---If changing mouse is not allowed, for example by a extern mod, then deactivate the action event  
+    if not self:isChangingMouseStateAllowed() then
+        local actionEvent = spec.actionEvents[InputAction.CLICK_TO_SWITCH_TOGGLE_MOUSE]
+        g_inputBinding:setActionEventActive(actionEvent.actionEventId, false)
+    end
 end
 
+---Action event for turning the mouse on/off
+---@param class self 
+---@param class actionName 
+---@param class inputValue 
+---@param class callbackState 
+---@param class isAnalog 
 function ClickToSwitch.actionEventToggleMouse(self, actionName, inputValue, callbackState, isAnalog)
-    local spec = self.spec_clickToSwitch
-    self:setShowMouseCursor(not spec.mouseActive)
+    if self:isChangingMouseStateAllowed() then
+        local spec = self.spec_clickToSwitch
+        self:setShowMouseCursor(not self:isMouseActive())
+    end
 end
 
+---Action event for entering a vehicle by mouse click
+---@param class self 
+---@param class actionName 
+---@param class inputValue 
+---@param class callbackState 
+---@param class isAnalog 
 function ClickToSwitch.actionEventEnterVehicle(self, actionName, inputValue, callbackState, isAnalog)
-    local x,y = self:getLastMousePosition()
-    self:tryToEnterVehicle(x,y)
+    if self:isClickToSwitchAllowed() then
+        local x,y = self:getLastMousePosition()
+        self:enterVehicleRaycast(x,y)
+    end
 end
 
 function ClickToSwitch:onLoad(savegame)
-	local specName = ClickToSwitch.MOD_NAME .. ".clickToSwitch"
+	---Register the spec: spec_clickToSwitch
+    local specName = ClickToSwitch.MOD_NAME .. ".clickToSwitch"
     self.spec_clickToSwitch = self["spec_" .. specName]
     local spec = self.spec_clickToSwitch
-
+    
     spec.texts = {}
     spec.texts.toggleMouse = g_i18n:getText("CLICK_TO_SWITCH_TOGGLE_MOUSE")
     spec.texts.enterVehicle = g_i18n:getText("CLICK_TO_SWITCH_ENTER_VEHICLE")
     spec.mouseActive = false
+    ---Creating a backup table of all camera and if they are rotatable
     spec.camerasBackup = {}
     for camIndex, camera in pairs(self.spec_enterable.cameras) do
 		if camera.isRotatable then
@@ -71,44 +104,58 @@ function ClickToSwitch:onLoad(savegame)
 	end
 end
 
+---Is the mouse visible/active
 function ClickToSwitch:isMouseActive()
-    return self.mouseActive
+    local spec = self.spec_clickToSwitch
+    return spec.mouseActive
 end
 
-function ClickToSwitch:isAllowed()
-	return true --not (self.spec_attachable and self.spec_attachable.attacherVehicle)
+---Is entering vehicle by mouse click allowed
+function ClickToSwitch:isClickToSwitchAllowed()
+    return self:isMouseActive()
 end
 
+---Is changing mouse visibly (g_inputBinding:setShowMouseCursor) allowed
+function ClickToSwitch:isChangingMouseStateAllowed()
+    return true
+end
+
+---Active/disable the mouse cursor
 function ClickToSwitch:setShowMouseCursor(show)
     local spec = self.spec_clickToSwitch
 	g_inputBinding:setShowMouseCursor(show)
     spec.mouseActive = show
-  --  g_currentMission.isPlayerFrozen = show
+    ---Update the action events
     ClickToSwitch.updateActionEventState(self)
-    --Cameras: deactivate/reactivate zoom function in order to allow CP mouse wheel
+    ---While mouse cursor is active, disable the camera rotations
 	for camIndex,_ in pairs(spec.camerasBackup) do
 		self.spec_enterable.cameras[camIndex].isRotatable = not show
-	--	print(string.format("%s: right mouse key (mouse cursor=%s): camera %d allowTranslation=%s", tostring(self:getName()), tostring(show), camIndex, tostring(self.spec_enterable.cameras[camIndex].isRotatable)));
 	end
-
 end
 
+---Gets the last mouse cursor screen positions
+---@return float posX,posY
 function ClickToSwitch:getLastMousePosition()
     return g_inputBinding.mousePosXLast,g_inputBinding.mousePosYLast 
 end
 
-
--- let's find out if a vehicle is under the cursor by casting a ray in that direction
-function ClickToSwitch:tryToEnterVehicle(posX, posY)
+---Creates a raycast relative to the current camera and the mouse click 
+---@param float mouseX,mouseY
+function ClickToSwitch:enterVehicleRaycast(posX, posY)
     local activeCam = getCamera()
     if activeCam ~= nil then
         local hx, hy, hz, px, py, pz = RaycastUtil.getCameraPickingRay(posX, posY, activeCam)
-        raycastClosest(hx, hy, hz, px, py, pz, "raycastCallback", 1000, self, 371)
+        raycastClosest(hx, hy, hz, px, py, pz, "enterVehicleRaycastCallback", 1000, self, 371)
     end
 end
 
--- this is called when the ray hits something
-function ClickToSwitch:raycastCallback(hitObjectId, x, y, z, distance)
+---@param int hitObjectId, scenegraph object id
+---@param float x, world x hit position
+---@param float	y, world y hit position
+---@param float	z, world z hit position
+---@param float	distance, distance at which the cast hit the object
+---@return bool was the correct object hit
+function ClickToSwitch:enterVehicleRaycastCallback(hitObjectId, x, y, z, distance)
     if hitObjectId ~= nil then
         local object = g_currentMission:getNodeObject(hitObjectId)    
         if object ~= nil then
