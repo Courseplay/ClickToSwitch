@@ -3,24 +3,34 @@
     <author><![CDATA[Courseplay.devTeam]]></author>
     <version>1.0.0.0</version>
     <title>
-        <en>Click to switch</en>
+        <en>Click To Switch</en>
     </title>
 
     <description>
         <en>
-		<![CDATA[Click to Switch - Just click on a vehicle to enter it! 
-        A quicker way of getting from a vehicle into another, which you can see from your current position, rather than cycling through your vehicles with a hotkey. A popular feature from the Courseplay mod now available as a standalone version.]]>
+		<![CDATA[Click to Switch - Just click on a vehicle to enter it!
+
+A quicker way of getting from a vehicle into another, which you can see from your current position, rather than cycling through your vehicles with a hotkey. A popular feature from the Courseplay mod now available as a standalone version.
+
+Right mouse click - Mouse cursor on/off
+
+Left mouse click - Enter vehicle]]>
 		</en>
         <de>
-		<![CDATA[Click to switch - Einfach auf ein Fahrzeug klicken zum einsteigen!
-        Der schnelle Weg, um von einem Fahrzeug in ein anderes im sichtbereich zu gelangen. Schneller und komfortabler als durch die Fahrzeuge mit einer Taste zu wechseln. Ein beliebtes Feature von Courseplay, nun als eigenständige Mod.]]>
+		<![CDATA[Click to switch - Einfach auf ein Fahrzeug klicken zum Einsteigen!
+
+Der schnellste Weg, um von einem Fahrzeug in ein anderes in sichtbarer Nähe zu gelangen. Schneller und komfortabler als durch die Fahrzeuge mit einer Taste zu wechseln. Ein beliebtes Feature von Courseplay, nun als eigenständige Mod.
+
+Rechtsklick - Mauszeiger an/aus
+
+Linksklick - In Fahrzeug einsteigen]]>
 		</de>
     </description>
 
     <iconFilename>icon_clicktoswitch.dds</iconFilename>
     <multiplayer supported="true" />
 
-	<l10n filenamePrefix="translations/translation" /> <!-- load translations from "translations/translation_<language>.xml file -->
+	<l10n filenamePrefix="translations/translation" />
 	
 	<extraSourceFiles>
         <sourceFile filename="register.lua"/>
