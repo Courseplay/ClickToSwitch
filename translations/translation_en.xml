@@ -2,6 +2,8 @@
 <l10n>
 	<texts>
 		<text name="input_CLICK_TO_SWITCH_TOGGLE_MOUSE"		text="CTS: Mouse cursor on/off" />
-		<text name="input_CLICK_TO_SWITCH_ENTER_VEHICLE"		text="CTS: Enter vehicle" />
-	</texts>
+		<text name="input_CLICK_TO_SWITCH_ENTER_VEHICLE"	text="CTS: Enter vehicle" />
+		<text name="CLICK_TO_SWITCH_TOGGLE_MOUSE"			text="CTS: Mouse cursor on/off" />
+		<text name="CLICK_TO_SWITCH_ENTER_VEHICLE"			text="CTS: Enter Vehicle" />
+		</texts>
 </l10n>
