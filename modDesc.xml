@@ -46,7 +46,7 @@ Linksklick - In Fahrzeug einsteigen]]>
 			<binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_c" />
 		</actionBinding>
 		<actionBinding action="CLICK_TO_SWITCH_CHANGES_ASSIGNMENTS">
-			<binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_y" />
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_rctrl KEY_c" />
 		</actionBinding>
         <actionBinding action="CLICK_TO_SWITCH_ENTER_VEHICLE">
 			<binding device="KB_MOUSE_DEFAULT" input="MOUSE_BUTTON_LEFT" />
