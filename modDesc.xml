@@ -10,20 +10,40 @@
         <en>
 		<![CDATA[Click to Switch - Just click on a vehicle to enter it!
 
-A quicker way of getting from a vehicle into another, which you can see from your current position, rather than cycling through your vehicles with a hotkey. A popular feature from the Courseplay mod now available as a standalone version.
+A quicker way of getting from a vehicle into another, which you can see from your current position, rather than cycling through your vehicles with a hotkey. With improovement for Vehicles front loader and others.
 
-Right mouse click - Mouse cursor on/off
+Default Keybinds:
 
-Left mouse click - Enter vehicle]]>
+Mouse cursor on/off:
+Right mouse click
+
+Enter vehicle:
+Left mouse click
+
+Alternative keybind for Mouse cursor:
+Right ctrl + C
+
+Mouse cursor on/off alternative:
+Left ctrl + C]]>
 		</en>
         <de>
 		<![CDATA[Click to switch - Einfach auf ein Fahrzeug klicken zum Einsteigen!
 
-Der schnellste Weg, um von einem Fahrzeug in ein anderes in sichtbarer Nähe zu gelangen. Schneller und komfortabler als durch die Fahrzeuge mit einer Taste zu wechseln. Ein beliebtes Feature von Courseplay, nun als eigenständige Mod.
+Der schnellste Weg, um von einem Fahrzeug in ein anderes in sichtbarer Nähe zu gelangen. Schneller und komfortabler als durch die Fahrzeuge mit einer Taste zu wechseln. Mit Verbesserung für Fahrzeuge mit Frontlader und Co.
 
-Rechtsklick - Mauszeiger an/aus
+Standart Tastenbelegung:
 
-Linksklick - In Fahrzeug einsteigen]]>
+Mauszeiger an/aus:
+Rechtsklick
+
+In Fahrzeug einsteigen:
+Linksklick
+
+Alternative Tastenbelegung für Mauszeiger:
+Steuerung rechts + C
+
+Mauszeiger an/aus alternative Belegung:
+Steuerung links + C]]>
 		</de>
     </description>
 
@@ -62,7 +82,7 @@ Linksklick - In Fahrzeug einsteigen]]>
 
 	<l10n>	
 		<text name="input_CLICK_TO_SWITCH_TOGGLE_MOUSE"><de>CTS: Mauszeiger an/aus</de><en>CTS: Mouse cursor on/off</en></text>	
-        <text name="input_CLICK_TO_SWITCH_TOGGLE_MOUSE_ALTERNATIVE"><de>CTS: Mauszeiger an/aus</de><en>CTS: Mouse cursor on/off</en></text>
+        <text name="input_CLICK_TO_SWITCH_TOGGLE_MOUSE_ALTERNATIVE"><de>CTS: Mauszeiger an/aus alternative</de><en>CTS: Mouse cursor on/off alternative</en></text>
 		<text name="input_CLICK_TO_SWITCH_CHANGES_ASSIGNMENTS"><de>CTS: Ändert die Belegung</de><en>CTS: Changes assignments</en></text>
 		<text name="input_CLICK_TO_SWITCH_ENTER_VEHICLE"><de>CTS: In Fahrzeug einsteigen</de><en>CTS: Try to enter vehicle</en></text>
 	</l10n>
