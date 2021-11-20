@@ -195,8 +195,10 @@ function ClickToSwitch:enterVehicleRaycastCallbackClickToSwitch(hitObjectId, x, 
             local rootVehicle = object.rootVehicle
             local targetObject = object.spec_enterable and object or rootVehicle~=nil and rootVehicle.spec_enterable and rootVehicle
             if targetObject then 
-                -- this is a valid vehicle, so enter it
-                g_currentMission:requestToEnterVehicle(targetObject)
+                if targetObject ~= g_currentMission.controlledVehicle then 
+                    -- this is a valid vehicle, so enter it
+                    g_currentMission:requestToEnterVehicle(targetObject)
+                end
                 self:setClickToSwitchShowMouseCursor(false)
                 return false
             end                
@@ -204,11 +206,3 @@ function ClickToSwitch:enterVehicleRaycastCallbackClickToSwitch(hitObjectId, x, 
     end
     return true
 end
-function ClickToSwitch:restartSaveGame(saveGameNumber)
-	if g_server then
-		doRestart(true, " -autoStartSavegameId " .. saveGameNumber)
-		print("doRestart")
-		--restartApplication(" -autoStartSavegameId " .. saveGameNumber)
-	end
-end
-addConsoleCommand( 'cpRestartSaveGame', 'Load and start a savegame', 'restartSaveGame',ClickToSwitch)
