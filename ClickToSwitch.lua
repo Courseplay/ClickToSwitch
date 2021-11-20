@@ -14,6 +14,8 @@
 ClickToSwitch = {}
 
 ClickToSwitch.MOD_NAME = g_currentModName
+ClickToSwitch.DEFAULT_ASSIGNMENT = 0
+ClickToSwitch.ADVANCED_ASSIGNMENT = 1
 
 function ClickToSwitch.prerequisitesPresent(specializations)
     return SpecializationUtil.hasSpecialization(Drivable, specializations) 
@@ -40,9 +42,13 @@ function ClickToSwitch:onLoad(savegame)
     local spec = self.spec_clickToSwitch
     
     spec.texts = {}
-    spec.texts.toggleMouse = g_i18n:getText("CLICK_TO_SWITCH_TOGGLE_MOUSE")
-    spec.texts.enterVehicle = g_i18n:getText("CLICK_TO_SWITCH_ENTER_VEHICLE")
+    spec.texts.toggleMouse = g_i18n:getText("input_CLICK_TO_SWITCH_TOGGLE_MOUSE")
+    spec.texts.toggleMouseAlternative = g_i18n:getText("input_CLICK_TO_SWITCH_TOGGLE_MOUSE_ALTERNATIVE")
+    spec.texts.changesAssignments = g_i18n:getText("input_CLICK_TO_SWITCH_CHANGES_ASSIGNMENTS")
+    spec.texts.enterVehicle = g_i18n:getText("input_CLICK_TO_SWITCH_ENTER_VEHICLE")
+
     spec.mouseActive = false
+    spec.assignmentMode = ClickToSwitch.DEFAULT_ASSIGNMENT
     --- Creating a backup table of all camera and if they are rotatable
     spec.camerasBackup = {}
     for camIndex, camera in pairs(self.spec_enterable.cameras) do
@@ -65,6 +71,16 @@ function ClickToSwitch:onRegisterActionEvents(isActiveForInput, isActiveForInput
             g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
             g_inputBinding:setActionEventText(actionEventId, spec.texts.toggleMouse)
             --- ClickToSwitch (enter vehicle by mouse button) action event
+            _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.CLICK_TO_SWITCH_TOGGLE_MOUSE_ALTERNATIVE, self, ClickToSwitch.actionEventToggleMouse, false, true, false, true, nil)
+            g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
+            g_inputBinding:setActionEventText(actionEventId, spec.texts.toggleMouseAlternative)
+
+            --- ClickToSwitch (enter vehicle by mouse button) action event
+            _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.CLICK_TO_SWITCH_CHANGES_ASSIGNMENTS, self, ClickToSwitch.actionEventChangeAssignments, false, true, false, true, nil)
+            g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
+            g_inputBinding:setActionEventText(actionEventId, spec.texts.changesAssignments)
+
+            --- ClickToSwitch (enter vehicle by mouse button) action event
             _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.CLICK_TO_SWITCH_ENTER_VEHICLE, self, ClickToSwitch.actionEventEnterVehicle, false, true, false, true, nil)
             g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
             g_inputBinding:setActionEventText(actionEventId, spec.texts.enterVehicle)
@@ -79,8 +95,18 @@ end;
 function ClickToSwitch.updateActionEventState(self)
     --- Activate/deactivate the clickToSwitch action event 
     local spec = self.spec_clickToSwitch
+
     local actionEvent = spec.actionEvents[InputAction.CLICK_TO_SWITCH_ENTER_VEHICLE]
     g_inputBinding:setActionEventActive(actionEvent.actionEventId, self:isClickToSwitchMouseActive())
+
+    actionEvent = spec.actionEvents[InputAction.CLICK_TO_SWITCH_CHANGES_ASSIGNMENTS]
+    g_inputBinding:setActionEventActive(actionEvent.actionEventId, not self:isClickToSwitchMouseActive())
+
+    actionEvent = spec.actionEvents[InputAction.CLICK_TO_SWITCH_TOGGLE_MOUSE]
+    g_inputBinding:setActionEventActive(actionEvent.actionEventId, spec.assignmentMode == ClickToSwitch.DEFAULT_ASSIGNMENT)
+
+    actionEvent = spec.actionEvents[InputAction.CLICK_TO_SWITCH_TOGGLE_MOUSE_ALTERNATIVE]
+    g_inputBinding:setActionEventActive(actionEvent.actionEventId, spec.assignmentMode == ClickToSwitch.ADVANCED_ASSIGNMENT)
 end
 
 --- Action event for turning the mouse on/off
@@ -104,6 +130,12 @@ function ClickToSwitch.actionEventEnterVehicle(self, actionName, inputValue, cal
         local x,y = self:getClickToSwitchLastMousePosition()
         self:enterVehicleRaycastClickToSwitch(x,y)
     end
+end
+
+function ClickToSwitch.actionEventChangeAssignments(self, actionName, inputValue, callbackState, isAnalog)
+    local spec = self.spec_clickToSwitch
+    spec.assignmentMode = ClickToSwitch.DEFAULT_ASSIGNMENT and ClickToSwitch.ADVANCED_ASSIGNMENT or ClickToSwitch.DEFAULT_ASSIGNMENT
+    ClickToSwitch.updateActionEventState(self)
 end
 
 function ClickToSwitch:onClickToSwitchToggleMouse()
@@ -161,7 +193,7 @@ function ClickToSwitch:enterVehicleRaycastCallbackClickToSwitch(hitObjectId, x, 
         if object ~= nil then
             -- check if the object is a implement or trailer then get the rootVehicle 
             local rootVehicle = object.rootVehicle
-            local targetObject = object.spec_enterable and object or rootVehicle.spec_enterable and rootVehicle
+            local targetObject = object.spec_enterable and object or rootVehicle~=nil and rootVehicle.spec_enterable and rootVehicle
             if targetObject then 
                 -- this is a valid vehicle, so enter it
                 g_currentMission:requestToEnterVehicle(targetObject)
@@ -172,3 +204,11 @@ function ClickToSwitch:enterVehicleRaycastCallbackClickToSwitch(hitObjectId, x, 
     end
     return true
 end
+function ClickToSwitch:restartSaveGame(saveGameNumber)
+	if g_server then
+		doRestart(true, " -autoStartSavegameId " .. saveGameNumber)
+		print("doRestart")
+		--restartApplication(" -autoStartSavegameId " .. saveGameNumber)
+	end
+end
+addConsoleCommand( 'cpRestartSaveGame', 'Load and start a savegame', 'restartSaveGame',ClickToSwitch)

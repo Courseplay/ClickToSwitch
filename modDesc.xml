@@ -29,8 +29,6 @@ Linksklick - In Fahrzeug einsteigen]]>
 
     <iconFilename>icon_clicktoswitch.dds</iconFilename>
     <multiplayer supported="true" />
-
-	<l10n filenamePrefix="translations/translation" />
 	
 	<extraSourceFiles>
         <sourceFile filename="register.lua"/>
@@ -43,22 +41,30 @@ Linksklick - In Fahrzeug einsteigen]]>
 	<inputBinding>
 		<actionBinding action="CLICK_TO_SWITCH_TOGGLE_MOUSE">
 			<binding device="KB_MOUSE_DEFAULT" input="MOUSE_BUTTON_RIGHT" />
-            <binding device="GAMEPAD_DEFAULT" input="BUTTON_5 BUTTON_18" />
+		</actionBinding>
+		<actionBinding action="CLICK_TO_SWITCH_TOGGLE_MOUSE_ALTERNATIVE">
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_c" />
+		</actionBinding>
+		<actionBinding action="CLICK_TO_SWITCH_CHANGES_ASSIGNMENTS">
+			<binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_y" />
 		</actionBinding>
         <actionBinding action="CLICK_TO_SWITCH_ENTER_VEHICLE">
 			<binding device="KB_MOUSE_DEFAULT" input="MOUSE_BUTTON_LEFT" />
-            <binding device="GAMEPAD_DEFAULT" input="BUTTON_5 BUTTON_17" />
 		</actionBinding>	
     </inputBinding>	
 
 	<actions>
 		<action name="CLICK_TO_SWITCH_TOGGLE_MOUSE" />
+		<action name="CLICK_TO_SWITCH_TOGGLE_MOUSE_ALTERNATIVE" />
+		<action name="CLICK_TO_SWITCH_CHANGES_ASSIGNMENTS" />
         <action name="CLICK_TO_SWITCH_ENTER_VEHICLE" />
 	</actions>
 
 	<l10n>	
-		<text name="CLICK_TO_SWITCH_TOGGLE_MOUSE"><de>Mauszeiger an/aus</de><en>Mouse cursor on/off</en></text>	
-        <text name="CLICK_TO_SWITCH_ENTER_VEHICLE"><de>In Fahrzeug einsteigen</de><en>Try to enter vehicle</en></text>
+		<text name="input_CLICK_TO_SWITCH_TOGGLE_MOUSE"><de>CTS: Mauszeiger an/aus</de><en>CTS: Mouse cursor on/off</en></text>	
+        <text name="input_CLICK_TO_SWITCH_TOGGLE_MOUSE_ALTERNATIVE"><de>CTS: Mauszeiger an/aus</de><en>CTS: Mouse cursor on/off</en></text>
+		<text name="input_CLICK_TO_SWITCH_CHANGES_ASSIGNMENTS"><de>CTS: Ändert die Belegung</de><en>CTS: Changes assignments</en></text>
+		<text name="input_CLICK_TO_SWITCH_ENTER_VEHICLE"><de>CTS: In Fahrzeug einsteigen</de><en>CTS: Try to enter vehicle</en></text>
 	</l10n>
 
 </modDesc>

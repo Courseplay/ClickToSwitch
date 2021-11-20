@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<l10n>
-	<texts>
-		<text name="CLICK_TO_SWITCH_TOGGLE_MOUSE"		text="CTS: Курсор мыши вкл/выкл" />
-		<text name="CLICK_TO_SWITCH_ENTER_VEHICLE"		text="CTS: Сесть в технику" />
-	</texts>
-</l10n>

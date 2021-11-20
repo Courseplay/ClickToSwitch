@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<l10n>
-	<texts>
-		<text name="CLICK_TO_SWITCH_TOGGLE_MOUSE"		text="CTS: Mouse cursor on/off" />
-		<text name="CLICK_TO_SWITCH_ENTER_VEHICLE"		text="CTS: Enter vehicle" />
-	</texts>
-</l10n>

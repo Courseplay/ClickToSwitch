@@ -10,10 +10,3 @@ function validateVehicleTypes(typeManager)
     end
 end
 TypeManager.finalizeTypes = Utils.prependedFunction(TypeManager.finalizeTypes, validateVehicleTypes)
-
-function restartSaveGame(saveGameNumber)
-	if g_server then
-		restartApplication(" -autoStartSavegameId " .. saveGameNumber)
-	end
-end
-addConsoleCommand( 'cpRestartSaveGame', 'Load and start a savegame', 'restartSaveGame')
