@@ -14,8 +14,15 @@
 ClickToSwitch = {}
 
 ClickToSwitch.MOD_NAME = g_currentModName
-ClickToSwitch.DEFAULT_ASSIGNMENT = 0
-ClickToSwitch.ADVANCED_ASSIGNMENT = 1
+ClickToSwitch.DEFAULT_ASSIGNMENT = false
+ClickToSwitch.ADVANCED_ASSIGNMENT = true
+ClickToSwitch.KEY = "vehicles.vehicle(?).ClickToSwitch.clickToSwitch"
+
+function ClickToSwitch.initSpecialization()
+	local schema = Vehicle.xmlSchemaSavegame
+	schema:register(XMLValueType.BOOL, ClickToSwitch.KEY .. "#assignment",false)
+end
+
 
 function ClickToSwitch.prerequisitesPresent(specializations)
     return SpecializationUtil.hasSpecialization(Drivable, specializations) 
@@ -24,6 +31,8 @@ end
 function ClickToSwitch.registerEventListeners(vehicleType)	
 	SpecializationUtil.registerEventListener(vehicleType, "onRegisterActionEvents", ClickToSwitch)
 	SpecializationUtil.registerEventListener(vehicleType, "onLoad", ClickToSwitch)
+    SpecializationUtil.registerEventListener(vehicleType, "onReadStream", ClickToSwitch)
+    SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", ClickToSwitch)
 end
 
 function ClickToSwitch.registerFunctions(vehicleType)
@@ -56,6 +65,14 @@ function ClickToSwitch:onLoad(savegame)
 			spec.camerasBackup[camIndex] = camera.isRotatable
 		end
 	end
+
+    if savegame == nil or savegame.resetVehicles then return end
+    spec.assignmentMode = savegame.xmlFile:getValue(ClickToSwitch.KEY.."#assignment",false)
+end
+
+function ClickToSwitch:saveToXMLFile(xmlFile, key, usedModNames)
+    local spec = self.spec_clickToSwitch
+    xmlFile:setValue(key .. "#assignment", spec.assignmentMode)
 end
 
 --- Register toggle mouse state and clickToSwitch action events
@@ -133,6 +150,22 @@ function ClickToSwitch.actionEventEnterVehicle(self, actionName, inputValue, cal
 end
 
 function ClickToSwitch.actionEventChangeAssignments(self, actionName, inputValue, callbackState, isAnalog)
+    ClickToSwitch.changeAssignments(self)
+    ClickToSwitchChangedAssignmentEvent.sendEvent(self)
+end
+
+
+function ClickToSwitch:onReadStream(streamId, connection)
+    local spec = self.spec_clickToSwitch
+	spec.assignmentMode = streamReadBool(streamId)
+end
+
+function ClickToSwitch:onWriteStream(streamId, connection)
+	local spec = self.spec_clickToSwitch
+	streamWriteBool(streamId, spec.assignmentMode)
+end
+
+function ClickToSwitch:changeAssignments()
     local spec = self.spec_clickToSwitch
     spec.assignmentMode = spec.assignmentMode == ClickToSwitch.DEFAULT_ASSIGNMENT and ClickToSwitch.ADVANCED_ASSIGNMENT or ClickToSwitch.DEFAULT_ASSIGNMENT
     ClickToSwitch.updateActionEventState(self)
@@ -170,8 +203,8 @@ function ClickToSwitch:getClickToSwitchLastMousePosition()
 end
 
 --- Creates a raycast relative to the current camera and the mouse click 
----@param mouseX number
----@param mouseY number
+---@param posX number
+---@param posY number
 function ClickToSwitch:enterVehicleRaycastClickToSwitch(posX, posY)
     local activeCam = getCamera()
     if activeCam ~= nil then
@@ -206,3 +239,55 @@ function ClickToSwitch:enterVehicleRaycastCallbackClickToSwitch(hitObjectId, x, 
     end
     return true
 end
+
+
+ClickToSwitchChangedAssignmentEvent = {}
+local ClickToSwitchChangedAssignmentEvent_mt = Class(ClickToSwitchChangedAssignmentEvent, Event)
+
+InitEventClass(ClickToSwitchChangedAssignmentEvent, "ClickToSwitchChangedAssignmentEvent")
+
+function ClickToSwitchChangedAssignmentEvent.emptyNew()
+	return Event.new(ClickToSwitchChangedAssignmentEvent_mt)
+end
+
+--- Creates a new Event
+function ClickToSwitchChangedAssignmentEvent.new(vehicle)
+	local self = ClickToSwitchChangedAssignmentEvent.emptyNew()
+    self.vehicle = vehicle
+	return self
+end
+
+--- Reads the serialized data on the receiving end of the event.
+function ClickToSwitchChangedAssignmentEvent:readStream(streamId, connection) -- wird aufgerufen wenn mich ein Event erreicht
+	self.vehicle = NetworkUtil.readNodeObject(streamId)
+	self:run(connection);
+end
+
+--- Writes the serialized data from the sender.ClickToSwitchChangedAssignmentEvent
+function ClickToSwitchChangedAssignmentEvent:writeStream(streamId, connection)  -- Wird aufgrufen wenn ich ein event verschicke (merke: reihenfolge der Daten muss mit der bei readStream uebereinstimmen 
+	NetworkUtil.writeNodeObject(streamId,self.vehicle)
+end
+
+--- Runs the event on the receiving end of the event.
+function ClickToSwitchChangedAssignmentEvent:run(connection) -- wir fuehren das empfangene event aus
+	if self.vehicle then 
+		local spec = self.vehicle.spec_clickToSwitch
+		if spec then 
+			ClickToSwitch.changeAssignments(self.vehicle)
+		end
+	end
+
+	--- If the receiver was the client make sure every clients gets also updated.
+	if not connection:getIsServer() then
+		g_server:broadcastEvent(ClickToSwitchChangedAssignmentEvent:new(self.vehicle), nil, connection, self.vehicle)
+	end
+end
+
+function ClickToSwitchChangedAssignmentEvent.sendEvent(vehicle)
+	if g_server ~= nil then
+		g_server:broadcastEvent(ClickToSwitchChangedAssignmentEvent:new(vehicle), nil, nil, vehicle)
+	else
+		g_client:getServerConnection():sendEvent(ClickToSwitchChangedAssignmentEvent:new(vehicle))
+	end
+end
+
