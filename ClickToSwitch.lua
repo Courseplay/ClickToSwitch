@@ -16,11 +16,11 @@ ClickToSwitch = {}
 ClickToSwitch.MOD_NAME = g_currentModName
 ClickToSwitch.DEFAULT_ASSIGNMENT = false
 ClickToSwitch.ADVANCED_ASSIGNMENT = true
-ClickToSwitch.KEY = "vehicles.vehicle(?).ClickToSwitch.clickToSwitch"
+ClickToSwitch.KEY = "."..ClickToSwitch.MOD_NAME..".clickToSwitch#assignment"
 
 function ClickToSwitch.initSpecialization()
 	local schema = Vehicle.xmlSchemaSavegame
-	schema:register(XMLValueType.BOOL, ClickToSwitch.KEY .. "#assignment",false)
+	schema:register(XMLValueType.BOOL, "vehicles.vehicle(?)"..ClickToSwitch.KEY,false)
 end
 
 
@@ -67,7 +67,7 @@ function ClickToSwitch:onLoad(savegame)
 	end
 
     if savegame == nil or savegame.resetVehicles then return end
-    spec.assignmentMode = savegame.xmlFile:getValue(ClickToSwitch.KEY.."#assignment",false)
+    spec.assignmentMode = savegame.xmlFile:getValue(savegame.key..ClickToSwitch.KEY,false)
 end
 
 function ClickToSwitch:saveToXMLFile(xmlFile, key, usedModNames)
@@ -279,15 +279,15 @@ function ClickToSwitchChangedAssignmentEvent:run(connection) -- wir fuehren das 
 
 	--- If the receiver was the client make sure every clients gets also updated.
 	if not connection:getIsServer() then
-		g_server:broadcastEvent(ClickToSwitchChangedAssignmentEvent:new(self.vehicle), nil, connection, self.vehicle)
+		g_server:broadcastEvent(ClickToSwitchChangedAssignmentEvent.new(self.vehicle), nil, connection, self.vehicle)
 	end
 end
 
 function ClickToSwitchChangedAssignmentEvent.sendEvent(vehicle)
 	if g_server ~= nil then
-		g_server:broadcastEvent(ClickToSwitchChangedAssignmentEvent:new(vehicle), nil, nil, vehicle)
+		g_server:broadcastEvent(ClickToSwitchChangedAssignmentEvent.new(vehicle), nil, nil, vehicle)
 	else
-		g_client:getServerConnection():sendEvent(ClickToSwitchChangedAssignmentEvent:new(vehicle))
+		g_client:getServerConnection():sendEvent(ClickToSwitchChangedAssignmentEvent.new(vehicle))
 	end
 end
 
