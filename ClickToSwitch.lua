@@ -113,6 +113,10 @@ function ClickToSwitch.updateActionEventState(self)
     --- Activate/deactivate the clickToSwitch action event 
     local spec = self.spec_clickToSwitch
 
+    if spec.actionEvents == nil or next(spec.actionEvents) == nil then 
+        return
+    end
+
     local actionEvent = spec.actionEvents[InputAction.CLICK_TO_SWITCH_ENTER_VEHICLE]
     g_inputBinding:setActionEventActive(actionEvent.actionEventId, self:isClickToSwitchMouseActive())
 
