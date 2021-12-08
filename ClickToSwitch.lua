@@ -162,6 +162,7 @@ end
 function ClickToSwitch:onReadStream(streamId, connection)
     local spec = self.spec_clickToSwitch
 	spec.assignmentMode = streamReadBool(streamId)
+    ClickToSwitch.updateActionEventState(self)
 end
 
 function ClickToSwitch:onWriteStream(streamId, connection)
