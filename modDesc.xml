@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="61">
     <author><![CDATA[Courseplay.devTeam]]></author>
-    <version>1.0.0.0</version>
+    <version>1.0.0.1</version>
     <title>
         <en>Click To Switch</en>
     </title>
@@ -24,7 +24,10 @@ Alternative keybind for Mouse cursor:
 Right ctrl + C
 
 Mouse cursor on/off alternative:
-Left ctrl + C]]>
+Left ctrl + C
+
+Changelog:
+- Mouse cursor on/off alternative state is now saved (also for MP)]]>
 		</en>
         <de>
 		<![CDATA[Click to switch - Einfach auf ein Fahrzeug klicken zum Einsteigen!
@@ -43,7 +46,10 @@ Alternative Tastenbelegung für Mauszeiger:
 Steuerung rechts + C
 
 Mauszeiger an/aus alternative Belegung:
-Steuerung links + C]]>
+Steuerung links + C
+
+Changelog:
+- Mauszeiger an/aus alternative Belegung wird jetzt gespeichert (auch im MP)]]>
 		</de>
     </description>
 

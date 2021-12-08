@@ -173,7 +173,6 @@ end
 function ClickToSwitch:changeAssignments()
     local spec = self.spec_clickToSwitch
     spec.assignmentMode = spec.assignmentMode == ClickToSwitch.DEFAULT_ASSIGNMENT and ClickToSwitch.ADVANCED_ASSIGNMENT or ClickToSwitch.DEFAULT_ASSIGNMENT
-    ClickToSwitch.updateActionEventState(self)
 end
 
 function ClickToSwitch:onClickToSwitchToggleMouse()
