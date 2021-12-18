@@ -33,12 +33,13 @@ function ClickToSwitch.registerEventListeners(vehicleType)
 	SpecializationUtil.registerEventListener(vehicleType, "onLoad", ClickToSwitch)
     SpecializationUtil.registerEventListener(vehicleType, "onReadStream", ClickToSwitch)
     SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", ClickToSwitch)
+    SpecializationUtil.registerEventListener(vehicleType, "onEnterVehicle", ClickToSwitch)
 end
 
 function ClickToSwitch.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "isClickToSwitchMouseActive", ClickToSwitch.isClickToSwitchMouseActive)
     SpecializationUtil.registerFunction(vehicleType, "onClickToSwitchToggleMouse", ClickToSwitch.onClickToSwitchToggleMouse)
-    SpecializationUtil.registerFunction(vehicleType, "setClickToSwitchShowMouseCursor", ClickToSwitch.setClickToSwitchShowMouseCursor)
+    SpecializationUtil.registerFunction(vehicleType, "toggleClickToSwitchShowMouseCursor", ClickToSwitch.toggleClickToSwitchShowMouseCursor)
     SpecializationUtil.registerFunction(vehicleType, "getClickToSwitchLastMousePosition", ClickToSwitch.getClickToSwitchLastMousePosition)
     SpecializationUtil.registerFunction(vehicleType, "enterVehicleRaycastClickToSwitch", ClickToSwitch.enterVehicleRaycastClickToSwitch)
     SpecializationUtil.registerFunction(vehicleType, "enterVehicleRaycastCallbackClickToSwitch", ClickToSwitch.enterVehicleRaycastCallbackClickToSwitch)
@@ -137,7 +138,7 @@ end
 ---@param callbackState number
 ---@param isAnalog boolean
 function ClickToSwitch.actionEventToggleMouse(self, actionName, inputValue, callbackState, isAnalog)
-    self:setClickToSwitchShowMouseCursor(not self:isClickToSwitchMouseActive())
+    self:toggleClickToSwitchShowMouseCursor()
 end
 
 --- Action event for entering a vehicle by mouse click
@@ -153,11 +154,16 @@ function ClickToSwitch.actionEventEnterVehicle(self, actionName, inputValue, cal
     end
 end
 
+function ClickToSwitch:onEnterVehicle()
+    if self:isClickToSwitchMouseActive() then
+        self:onClickToSwitchToggleMouse()
+    end
+end
+
 function ClickToSwitch.actionEventChangeAssignments(self, actionName, inputValue, callbackState, isAnalog)
     ClickToSwitch.changeAssignments(self)
     ClickToSwitchChangedAssignmentEvent.sendEvent(self)
 end
-
 
 function ClickToSwitch:onReadStream(streamId, connection)
     local spec = self.spec_clickToSwitch
@@ -189,14 +195,25 @@ end
 
 --- Active/disable the mouse cursor
 ---@param show boolean
-function ClickToSwitch:setClickToSwitchShowMouseCursor(show)
+function ClickToSwitch:toggleClickToSwitchShowMouseCursor()
     local spec = self.spec_clickToSwitch
-	g_inputBinding:setShowMouseCursor(show)
-    self:onClickToSwitchToggleMouse()
+    local blockCamRotation = nil
+    if not self:isClickToSwitchMouseActive() and not g_inputBinding:getShowMouseCursor() then
+        self:onClickToSwitchToggleMouse()
+        g_inputBinding:setShowMouseCursor(true)
+        blockCamRotation = true
+    elseif self:isClickToSwitchMouseActive() and g_inputBinding:getShowMouseCursor() then
+        self:onClickToSwitchToggleMouse()
+        g_inputBinding:setShowMouseCursor(false)
+        blockCamRotation = false
+    end
+
     ---While mouse cursor is active, disable the camera rotations
-	for camIndex,_ in pairs(spec.camerasBackup) do
-		self.spec_enterable.cameras[camIndex].isRotatable = not show
-	end
+    if blockCamRotation ~= nil then
+        for camIndex,_ in pairs(spec.camerasBackup) do
+            self.spec_enterable.cameras[camIndex].isRotatable = not self:isClickToSwitchMouseActive()
+        end
+    end
 end
 
 --- Gets the last mouse cursor screen positions
@@ -236,7 +253,7 @@ function ClickToSwitch:enterVehicleRaycastCallbackClickToSwitch(hitObjectId, x, 
                     -- this is a valid vehicle, so enter it
                     g_currentMission:requestToEnterVehicle(targetObject)
                 end
-                self:setClickToSwitchShowMouseCursor(false)
+                self:toggleClickToSwitchShowMouseCursor()
                 return false
             end                
         end
