@@ -27,7 +27,8 @@ Mouse cursor on/off alternative:
 Left ctrl + C
 
 Changelog:
-- Mouse cursor on/off alternative state is now saved (also for MP)]]>
+- Mouse cursor on/off alternative state is now saved (also for MP).
+- Added compatibility for AutoDrive.]]>
 		</en>
         <de>
 		<![CDATA[Click to switch - Einfach auf ein Fahrzeug klicken zum Einsteigen!
@@ -49,7 +50,8 @@ Mauszeiger an/aus alternative Belegung:
 Steuerung links + C
 
 Changelog:
-- Mauszeiger an/aus alternative Belegung wird jetzt gespeichert (auch im MP)]]>
+- Mauszeiger an/aus alternative Belegung wird jetzt gespeichert (auch im MP).
+- Kompatibilität für AutoDrive hinzugefügt.]]>
 		</de>
     </description>
 
