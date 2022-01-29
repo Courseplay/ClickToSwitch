@@ -33,13 +33,12 @@ function ClickToSwitch.registerEventListeners(vehicleType)
 	SpecializationUtil.registerEventListener(vehicleType, "onLoad", ClickToSwitch)
     SpecializationUtil.registerEventListener(vehicleType, "onReadStream", ClickToSwitch)
     SpecializationUtil.registerEventListener(vehicleType, "onWriteStream", ClickToSwitch)
-    SpecializationUtil.registerEventListener(vehicleType, "onEnterVehicle", ClickToSwitch)
+    SpecializationUtil.registerEventListener(vehicleType, "onUpdateTick", ClickToSwitch)
+    
 end
 
 function ClickToSwitch.registerFunctions(vehicleType)
     SpecializationUtil.registerFunction(vehicleType, "isClickToSwitchMouseActive", ClickToSwitch.isClickToSwitchMouseActive)
-    SpecializationUtil.registerFunction(vehicleType, "onClickToSwitchToggleMouse", ClickToSwitch.onClickToSwitchToggleMouse)
-    SpecializationUtil.registerFunction(vehicleType, "toggleClickToSwitchShowMouseCursor", ClickToSwitch.toggleClickToSwitchShowMouseCursor)
     SpecializationUtil.registerFunction(vehicleType, "getClickToSwitchLastMousePosition", ClickToSwitch.getClickToSwitchLastMousePosition)
     SpecializationUtil.registerFunction(vehicleType, "enterVehicleRaycastClickToSwitch", ClickToSwitch.enterVehicleRaycastClickToSwitch)
     SpecializationUtil.registerFunction(vehicleType, "enterVehicleRaycastCallbackClickToSwitch", ClickToSwitch.enterVehicleRaycastCallbackClickToSwitch)
@@ -57,7 +56,6 @@ function ClickToSwitch:onLoad(savegame)
     spec.texts.changesAssignments = g_i18n:getText("input_CLICK_TO_SWITCH_CHANGES_ASSIGNMENTS")
     spec.texts.enterVehicle = g_i18n:getText("input_CLICK_TO_SWITCH_ENTER_VEHICLE")
 
-    spec.mouseActive = false
     spec.assignmentMode = ClickToSwitch.DEFAULT_ASSIGNMENT
     --- Creating a backup table of all camera and if they are rotatable
     spec.camerasBackup = {}
@@ -69,6 +67,7 @@ function ClickToSwitch:onLoad(savegame)
 
     if savegame == nil or savegame.resetVehicles then return end
     spec.assignmentMode = savegame.xmlFile:getValue(savegame.key..ClickToSwitch.KEY,false)
+    spec.changedCamera = false
 end
 
 function ClickToSwitch:saveToXMLFile(xmlFile, key, usedModNames)
@@ -83,30 +82,32 @@ function ClickToSwitch:onRegisterActionEvents(isActiveForInput, isActiveForInput
 	if self.isClient then
         local spec = self.spec_clickToSwitch
         self:clearActionEventsTable(spec.actionEvents)
-        if isActiveForInputIgnoreSelection then
-            --- Toggle mouse action event
-            local _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.CLICK_TO_SWITCH_TOGGLE_MOUSE, self, ClickToSwitch.actionEventToggleMouse, false, true, false, true, nil)
-            g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
-            g_inputBinding:setActionEventText(actionEventId, spec.texts.toggleMouse)
+        if self.isActiveForInputIgnoreSelectionIgnoreAI then
+            if not g_modIsLoaded["FS22_Courseplay"] and not g_modIsLoaded["FS22_AutoDrive"] then
+                --- Toggle mouse action event
+                local _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.CLICK_TO_SWITCH_TOGGLE_MOUSE, self, ClickToSwitch.actionEventToggleMouse, false, true, false, true, nil)
+                g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
+                g_inputBinding:setActionEventText(actionEventId, spec.texts.toggleMouse)
+                
+                --- ClickToSwitch (enter vehicle by mouse button) action event
+                _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.CLICK_TO_SWITCH_TOGGLE_MOUSE_ALTERNATIVE, self, ClickToSwitch.actionEventToggleMouse, false, true, false, true, nil)
+                g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
+                g_inputBinding:setActionEventText(actionEventId, spec.texts.toggleMouseAlternative)
+                
+                --- ClickToSwitch (enter vehicle by mouse button) action event
+                _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.CLICK_TO_SWITCH_CHANGES_ASSIGNMENTS, self, ClickToSwitch.actionEventChangeAssignments, false, true, false, true, nil)
+                g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
+                g_inputBinding:setActionEventText(actionEventId, spec.texts.changesAssignments)
+            end
             --- ClickToSwitch (enter vehicle by mouse button) action event
-            _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.CLICK_TO_SWITCH_TOGGLE_MOUSE_ALTERNATIVE, self, ClickToSwitch.actionEventToggleMouse, false, true, false, true, nil)
-            g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
-            g_inputBinding:setActionEventText(actionEventId, spec.texts.toggleMouseAlternative)
-
-            --- ClickToSwitch (enter vehicle by mouse button) action event
-            _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.CLICK_TO_SWITCH_CHANGES_ASSIGNMENTS, self, ClickToSwitch.actionEventChangeAssignments, false, true, false, true, nil)
-            g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
-            g_inputBinding:setActionEventText(actionEventId, spec.texts.changesAssignments)
-
-            --- ClickToSwitch (enter vehicle by mouse button) action event
-            _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.CLICK_TO_SWITCH_ENTER_VEHICLE, self, ClickToSwitch.actionEventEnterVehicle, false, true, false, true, nil)
+            local _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.CLICK_TO_SWITCH_ENTER_VEHICLE, self, ClickToSwitch.actionEventEnterVehicle, false, true, false, true, nil)
             g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
             g_inputBinding:setActionEventText(actionEventId, spec.texts.enterVehicle)
 
             ClickToSwitch.updateActionEventState(self)
         end
     end
-end;
+end
 
 --- Updates toggle mouse state and clickToSwitch action events visibility and usability 
 ---@param self table vehicle
@@ -117,18 +118,26 @@ function ClickToSwitch.updateActionEventState(self)
     if spec.actionEvents == nil or next(spec.actionEvents) == nil then 
         return
     end
-
+    
     local actionEvent = spec.actionEvents[InputAction.CLICK_TO_SWITCH_ENTER_VEHICLE]
     g_inputBinding:setActionEventActive(actionEvent.actionEventId, self:isClickToSwitchMouseActive())
 
     actionEvent = spec.actionEvents[InputAction.CLICK_TO_SWITCH_CHANGES_ASSIGNMENTS]
-    g_inputBinding:setActionEventActive(actionEvent.actionEventId, not self:isClickToSwitchMouseActive())
-
+    if actionEvent then
+        g_inputBinding:setActionEventActive(actionEvent.actionEventId, not self:isClickToSwitchMouseActive())
+    end
     actionEvent = spec.actionEvents[InputAction.CLICK_TO_SWITCH_TOGGLE_MOUSE]
-    g_inputBinding:setActionEventActive(actionEvent.actionEventId, spec.assignmentMode == ClickToSwitch.DEFAULT_ASSIGNMENT)
+    if actionEvent then
+        g_inputBinding:setActionEventActive(actionEvent.actionEventId, spec.assignmentMode == ClickToSwitch.DEFAULT_ASSIGNMENT)
+    end
+    if actionEvent then
+        actionEvent = spec.actionEvents[InputAction.CLICK_TO_SWITCH_TOGGLE_MOUSE_ALTERNATIVE]
+        g_inputBinding:setActionEventActive(actionEvent.actionEventId, spec.assignmentMode == ClickToSwitch.ADVANCED_ASSIGNMENT)
+    end
+end
 
-    actionEvent = spec.actionEvents[InputAction.CLICK_TO_SWITCH_TOGGLE_MOUSE_ALTERNATIVE]
-    g_inputBinding:setActionEventActive(actionEvent.actionEventId, spec.assignmentMode == ClickToSwitch.ADVANCED_ASSIGNMENT)
+function ClickToSwitch:onUpdateTick()
+    ClickToSwitch.updateActionEventState(self)
 end
 
 --- Action event for turning the mouse on/off
@@ -138,7 +147,15 @@ end
 ---@param callbackState number
 ---@param isAnalog boolean
 function ClickToSwitch.actionEventToggleMouse(self, actionName, inputValue, callbackState, isAnalog)
-    self:toggleClickToSwitchShowMouseCursor()
+    local spec = self.spec_clickToSwitch
+    local showCursor = not self:isClickToSwitchMouseActive()
+    spec.changedCamera = showCursor
+    g_inputBinding:setShowMouseCursor(showCursor)
+
+    ---While mouse cursor is active, disable the camera rotations
+    for camIndex,_ in pairs(spec.camerasBackup) do
+        self.spec_enterable.cameras[camIndex].isRotatable =  not showCursor and spec.camerasBackup[camIndex] 
+    end
 end
 
 --- Action event for entering a vehicle by mouse click
@@ -154,12 +171,6 @@ function ClickToSwitch.actionEventEnterVehicle(self, actionName, inputValue, cal
     end
 end
 
-function ClickToSwitch:onEnterVehicle()
-    if self:isClickToSwitchMouseActive() then
-        self:onClickToSwitchToggleMouse()
-    end
-end
-
 function ClickToSwitch.actionEventChangeAssignments(self, actionName, inputValue, callbackState, isAnalog)
     ClickToSwitch.changeAssignments(self)
     ClickToSwitchChangedAssignmentEvent.sendEvent(self)
@@ -168,7 +179,6 @@ end
 function ClickToSwitch:onReadStream(streamId, connection)
     local spec = self.spec_clickToSwitch
 	spec.assignmentMode = streamReadBool(streamId)
-    ClickToSwitch.updateActionEventState(self)
 end
 
 function ClickToSwitch:onWriteStream(streamId, connection)
@@ -178,42 +188,13 @@ end
 
 function ClickToSwitch:changeAssignments()
     local spec = self.spec_clickToSwitch
-    spec.assignmentMode = spec.assignmentMode == ClickToSwitch.DEFAULT_ASSIGNMENT and ClickToSwitch.ADVANCED_ASSIGNMENT or ClickToSwitch.DEFAULT_ASSIGNMENT
-end
-
-function ClickToSwitch:onClickToSwitchToggleMouse()
-    local spec = self.spec_clickToSwitch
-    spec.mouseActive = not spec.mouseActive
-    ClickToSwitch.updateActionEventState(self)
+    spec.assignmentMode = spec.assignmentMode == ClickToSwitch.DEFAULT_ASSIGNMENT and ClickToSwitch.ADVANCED_ASSIGNMENT 
+                          or ClickToSwitch.DEFAULT_ASSIGNMENT
 end
 
 --- Is the mouse visible/active
 function ClickToSwitch:isClickToSwitchMouseActive()
-    local spec = self.spec_clickToSwitch
-    return spec.mouseActive
-end
-
---- Active/disable the mouse cursor
----@param show boolean
-function ClickToSwitch:toggleClickToSwitchShowMouseCursor()
-    local spec = self.spec_clickToSwitch
-    local blockCamRotation = nil
-    if not self:isClickToSwitchMouseActive() and not g_inputBinding:getShowMouseCursor() then
-        self:onClickToSwitchToggleMouse()
-        g_inputBinding:setShowMouseCursor(true)
-        blockCamRotation = true
-    elseif self:isClickToSwitchMouseActive() and g_inputBinding:getShowMouseCursor() then
-        self:onClickToSwitchToggleMouse()
-        g_inputBinding:setShowMouseCursor(false)
-        blockCamRotation = false
-    end
-
-    ---While mouse cursor is active, disable the camera rotations
-    if blockCamRotation ~= nil then
-        for camIndex,_ in pairs(spec.camerasBackup) do
-            self.spec_enterable.cameras[camIndex].isRotatable = not self:isClickToSwitchMouseActive()
-        end
-    end
+    return g_inputBinding:getShowMouseCursor()
 end
 
 --- Gets the last mouse cursor screen positions
@@ -252,8 +233,17 @@ function ClickToSwitch:enterVehicleRaycastCallbackClickToSwitch(hitObjectId, x, 
                 if targetObject ~= g_currentMission.controlledVehicle then 
                     -- this is a valid vehicle, so enter it
                     g_currentMission:requestToEnterVehicle(targetObject)
+                    if self ~= g_currentMission.controlledVehicle then
+                        local spec = self.spec_clickToSwitch
+                        if spec.changedCamera then 
+                            g_inputBinding:setShowMouseCursor(false)
+                            spec.changedCamera = false
+                            for camIndex,_ in pairs(spec.camerasBackup) do
+                                self.spec_enterable.cameras[camIndex].isRotatable = spec.camerasBackup[camIndex] 
+                            end
+                        end
+                    end
                 end
-                self:toggleClickToSwitchShowMouseCursor()
                 return false
             end                
         end
