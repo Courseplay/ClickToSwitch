@@ -35,7 +35,7 @@ Changelog 1.0.0.1:
 
 Changelog 1.0.0.2:
 - Improved mouse handling with Courseplay and AutoDrive.
-- Fix bug to enable switching to a vehicle, while a helper is active.
+- Fixed bug to enable switching to a vehicle, while a helper is active.
 ]]>
 		</en>
         <de>
