@@ -11,22 +11,22 @@
         <en>
 		<![CDATA[Click to Switch - Just click on a vehicle to enter it!
 
-A quicker way of getting from a vehicle into another, which you can see from your current position, rather than cycling through your vehicles with a hotkey. With improovement for vehicles front loader and others.
+Simply click on the target vehicle with the mouse and enter it, instead of cycling through each vehicle.
 
 For bugs and feedback, please visit https://github.com/Courseplay/ClickToSwitch .
 
-Default Keybinds:
+Default keybindings:
 
-Mouse cursor on/off:
+Switching the mouse cursor on/off:
 Right mouse click
 
-Enter vehicle:
+Entering a vehicle:
 Left mouse click
 
-Alternative keybind for Mouse cursor:
+Changes between using the mouse cursor on/off keybinding and the alternative keybinding.
 Right ctrl + C
 
-Mouse cursor on/off alternative:
+Alternative keybinding for turning the mouse on/off:
 Left ctrl + C
 
 Changelog 1.0.0.1:
@@ -34,8 +34,8 @@ Changelog 1.0.0.1:
 - Added compatibility for AutoDrive.
 
 Changelog 1.0.0.2:
-- Can now be used with Courseplay and AutoDrive.
-- Fixed switching with active AI Drivers.
+- Improved mouse handling with Courseplay and AutoDrive.
+- Fix bug to enable switching to a vehicle, while a helper is active.
 ]]>
 		</en>
         <de>
