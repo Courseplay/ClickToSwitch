@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="61">
     <author><![CDATA[Courseplay.devTeam]]></author>
-    <version>1.0.0.1</version>
+    <version>1.0.0.2</version>
     <title>
         <en>Click To Switch</en>
 	<it>Click To Switch</it>
@@ -12,6 +12,8 @@
 		<![CDATA[Click to Switch - Just click on a vehicle to enter it!
 
 A quicker way of getting from a vehicle into another, which you can see from your current position, rather than cycling through your vehicles with a hotkey. With improovement for vehicles front loader and others.
+
+For bugs and feedback, please visit https://github.com/Courseplay/ClickToSwitch .
 
 Default Keybinds:
 
@@ -27,14 +29,21 @@ Right ctrl + C
 Mouse cursor on/off alternative:
 Left ctrl + C
 
-Changelog:
+Changelog 1.0.0.1:
 - Mouse cursor on/off alternative state is now saved (also for MP).
-- Added compatibility for AutoDrive.]]>
+- Added compatibility for AutoDrive.
+
+Changelog 1.0.0.2:
+- Can now be used with Courseplay and AutoDrive.
+- Fixed switching with active AI Drivers.
+]]>
 		</en>
         <de>
 		<![CDATA[Click to switch - Einfach auf ein Fahrzeug klicken zum Einsteigen!
 
 Der schnellste Weg, um von einem Fahrzeug in ein anderes in sichtbarer Nähe zu gelangen. Schneller und komfortabler als durch die Fahrzeuge mit einer Taste zu wechseln. Mit Verbesserung für Fahrzeuge mit Frontlader und Co.
+
+Bei Problemen und Anregungen, schaut bitte unter https://github.com/Courseplay/ClickToSwitch vorbei.
 
 Standard Tastenbelegung:
 
@@ -50,33 +59,15 @@ Steuerung rechts + C
 Mauszeiger an/aus alternative Belegung:
 Steuerung links + C
 
-Changelog:
+Changelog 1.0.0.1:
 - Mauszeiger an/aus alternative Belegung wird jetzt gespeichert (auch im MP).
-- Kompatibilität für AutoDrive hinzugefügt.]]>
+- Kompatibilität für AutoDrive hinzugefügt.
+
+Changelog 1.0.0.2:
+- Kann jetzt mit Courseplay und AutoDrive verwendet werden.
+- Switchen mit Helfern gefixt.
+]]>
 		</de>
-        <it>
-		<![CDATA[Click to switch - Basta fare clic su un veicolo per entrare!
-
-Il modo più veloce per passare da un veicolo all'altro in vista. Più veloce e più conveniente rispetto al passaggio da un veicolo all'altro con un pulsante. Con miglioramenti per veicoli con caricatori frontali e Co.
-
-Assegnazione dei tasti standard:
-
-Abilita/Disabilita il puntatore del mouse:
-Fare clic con il tasto destro
-
-Per entrare nel veicolo:
-Fare clic con il tasto sinistro
-
-Assegnazione alternativa dei tasti per il puntatore del mouse:
-Ctrl destro + C
-
-Attivazione/disattivazione del puntatore del mouse Assegnazione alternativa:
-Ctrl sinistro + C
-
-Changelog:
-- L'assegnazione alternativa del puntatore del mouse viene ora salvata (anche nel MP).
-- Aggiunta compatibilità per AutoDrive.]]>
-		</it>
     </description>
 
     <iconFilename>icon_clicktoswitch.dds</iconFilename>
