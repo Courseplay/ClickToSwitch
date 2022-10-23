@@ -104,10 +104,10 @@ Changelog 1.0.0.2:
 	</actions>
 
 	<l10n>	
-		<text name="input_CLICK_TO_SWITCH_TOGGLE_MOUSE"><de>CTS: Mauszeiger an/aus</de><en>CTS: Mouse cursor on/off</en><it>CTS: Cursore del mouse on/off</it></text>	
-        <text name="input_CLICK_TO_SWITCH_TOGGLE_MOUSE_ALTERNATIVE"><de>CTS: Mauszeiger an/aus alternative</de><en>CTS: Mouse cursor on/off alternative</en><it>CTS: Tasti alternativi cursore mouse on/off</it></text>
-		<text name="input_CLICK_TO_SWITCH_CHANGES_ASSIGNMENTS"><de>CTS: Ändert die Belegung</de><en>CTS: Changes assignments</en><it>CTS: Cambia assegnamento</it></text>
-		<text name="input_CLICK_TO_SWITCH_ENTER_VEHICLE"><de>CTS: In Fahrzeug einsteigen</de><en>CTS: Try to enter vehicle</en><it>CTS: Entra nel veicolo</it></text>
+		<text name="input_CLICK_TO_SWITCH_TOGGLE_MOUSE"><de>CTS: Mauszeiger an/aus</de><en>CTS: Mouse cursor on/off</en><it>CTS: Cursore del mouse on/off</it><pl>CTS: Pokaż/Ukryj kursor myszy</pl></text>	
+        <text name="input_CLICK_TO_SWITCH_TOGGLE_MOUSE_ALTERNATIVE"><de>CTS: Mauszeiger an/aus alternative</de><en>CTS: Mouse cursor on/off alternative</en><it>CTS: Tasti alternativi cursore mouse on/off</it><pl>CTS: Pokaż/Ukryj kursor myszy alternatywny</pl></text>
+		<text name="input_CLICK_TO_SWITCH_CHANGES_ASSIGNMENTS"><de>CTS: Ändert die Belegung</de><en>CTS: Changes assignments</en><it>CTS: Cambia assegnamento</it><pl>CTS: Zmień przypisanie</pl></text>
+		<text name="input_CLICK_TO_SWITCH_ENTER_VEHICLE"><de>CTS: In Fahrzeug einsteigen</de><en>CTS: Try to enter vehicle</en><it>CTS: Entra nel veicolo</it><pl>CTS: Spróbuj wsiąść do pojazdu</pl></text>
 	</l10n>
 
 </modDesc>
