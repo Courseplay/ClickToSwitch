@@ -211,7 +211,7 @@ function ClickToSwitch:enterVehicleRaycastClickToSwitch(posX, posY)
     local activeCam = getCamera()
     if activeCam ~= nil then
         local hx, hy, hz, px, py, pz = RaycastUtil.getCameraPickingRay(posX, posY, activeCam)
-        raycastClosest(hx, hy, hz, px, py, pz, "enterVehicleRaycastCallbackClickToSwitch", 1000, self, 371)
+        raycastClosest(hx, hy, hz, px, py, pz, 1000, "enterVehicleRaycastCallbackClickToSwitch", self, 371)
     end
 end
 
