@@ -83,7 +83,7 @@ function ClickToSwitch:onRegisterActionEvents(isActiveForInput, isActiveForInput
         local spec = self.spec_clickToSwitch
         self:clearActionEventsTable(spec.actionEvents)
         if self.isActiveForInputIgnoreSelectionIgnoreAI then
-            if not g_modIsLoaded["FS22_Courseplay"] and not g_modIsLoaded["FS22_AutoDrive"] then
+            if not g_modIsLoaded["FS25_Courseplay"] and not g_modIsLoaded["FS25_AutoDrive"] then
                 --- Toggle mouse action event
                 local _, actionEventId = self:addActionEvent(spec.actionEvents, InputAction.CLICK_TO_SWITCH_TOGGLE_MOUSE, self, ClickToSwitch.actionEventToggleMouse, false, true, false, true, nil)
                 g_inputBinding:setActionEventTextPriority(actionEventId, GS_PRIO_NORMAL)
