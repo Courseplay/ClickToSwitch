@@ -211,7 +211,7 @@ function ClickToSwitch:enterVehicleRaycastClickToSwitch(posX, posY)
     local activeCam = getCamera()
     if activeCam ~= nil then
         local hx, hy, hz, px, py, pz = RaycastUtil.getCameraPickingRay(posX, posY, activeCam)
-        raycastClosest(hx, hy, hz, px, py, pz, 1000, "enterVehicleRaycastCallbackClickToSwitch", self, 371)
+        raycastClosest(hx, hy, hz, px, py, pz, 1000, "enterVehicleRaycastCallbackClickToSwitch", self, CollisionFlag.VEHICLE)
     end
 end
 
@@ -224,16 +224,16 @@ end
 ---@return bool was the correct object hit?
 function ClickToSwitch:enterVehicleRaycastCallbackClickToSwitch(hitObjectId, x, y, z, distance)
     if hitObjectId ~= nil then
-        local object = g_currentMission:getNodeObject(hitObjectId)    
+        local object = g_currentMission.nodeToObject[hitObjectId]    
         if object ~= nil then
             -- check if the object is a implement or trailer then get the rootVehicle 
             local rootVehicle = object.rootVehicle
             local targetObject = object.spec_enterable and object or rootVehicle~=nil and rootVehicle.spec_enterable and rootVehicle
             if targetObject then 
-                if targetObject ~= g_currentMission.controlledVehicle then 
+                if targetObject ~= g_currentMission.playerSystem:getLocalPlayer():getCurrentVehicle() then 
                     -- this is a valid vehicle, so enter it
-                    g_currentMission:requestToEnterVehicle(targetObject)
-                    if self ~= g_currentMission.controlledVehicle then
+                    g_currentMission.playerSystem:getLocalPlayer():requestToEnterVehicle(targetObject)
+                    if self ~= g_currentMission.playerSystem:getLocalPlayer():getCurrentVehicle() then
                         local spec = self.spec_clickToSwitch
                         if spec.changedCamera then 
                             g_inputBinding:setShowMouseCursor(false)
