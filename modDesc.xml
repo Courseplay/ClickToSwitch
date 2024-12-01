@@ -23,19 +23,12 @@ Right mouse click
 Entering a vehicle:
 Left mouse click
 
-Changes between using the mouse cursor on/off keybinding and the alternative keybinding.
+Additional keybinds if you use click to switch without Courseplay:
+Changes between using the mouse cursor on/off keybinding and the alternative keybinding:
 Right ctrl + C
 
 Alternative keybinding for turning the mouse on/off:
 Left ctrl + C
-
-Changelog 1.0.0.1:
-- Mouse cursor on/off alternative state is now saved (also for MP).
-- Added compatibility for AutoDrive.
-
-Changelog 1.0.0.2:
-- Improved mouse handling with Courseplay and AutoDrive.
-- Fixed bug to enable switching to a vehicle, while a helper is active.
 ]]>
 		</en>
         <de>
@@ -53,19 +46,12 @@ Rechtsklick
 In Fahrzeug einsteigen:
 Linksklick
 
+Zusätzliche Tastenbelegung, wenn du click to switch ohne Courseplay verwendest:
 Alternative Tastenbelegung für Mauszeiger:
 Steuerung rechts + C
 
 Mauszeiger an/aus alternative Belegung:
 Steuerung links + C
-
-Changelog 1.0.0.1:
-- Mauszeiger an/aus alternative Belegung wird jetzt gespeichert (auch im MP).
-- Kompatibilität für AutoDrive hinzugefügt.
-
-Changelog 1.0.0.2:
-- Kann jetzt mit Courseplay und AutoDrive verwendet werden.
-- Switchen mit Helfern gefixt.
 ]]>
 		</de>
     </description>
