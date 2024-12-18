@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
-<modDesc descVersion="92">
+<modDesc descVersion="94">
     <author><![CDATA[Courseplay.devTeam]]></author>
     <version>1.0.0.0</version>
     <title>
         <en>Click To Switch</en>
-	<it>Click To Switch</it>
     </title>
 
     <description>
